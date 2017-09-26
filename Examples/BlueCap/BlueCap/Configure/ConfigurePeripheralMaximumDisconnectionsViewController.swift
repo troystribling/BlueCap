@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ConfigurePeripheralMaximumDisconnections: UIViewController {
+class ConfigurePeripheralMaximumDisconnections: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var maximumDisconnectionsTextField: UITextField!
 
@@ -23,6 +23,7 @@ class ConfigurePeripheralMaximumDisconnections: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        maximumDisconnectionsTextField.becomeFirstResponder()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -30,7 +31,7 @@ class ConfigurePeripheralMaximumDisconnections: UIViewController {
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let maximumDisconnections = self.maximumDisconnectionsTextField.text, let maximumDisconnectionsInt = UInt(maximumDisconnections) , !maximumDisconnections.isEmpty {
             ConfigStore.setPeripheralMaximumDisconnections(maximumDisconnectionsInt)
             _ = self.navigationController?.popToRootViewController(animated: true)

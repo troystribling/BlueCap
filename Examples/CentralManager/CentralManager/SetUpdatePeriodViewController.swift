@@ -12,6 +12,7 @@ import BlueCapKit
 class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate {
 
     @IBOutlet var updatePeriodTextField : UITextField!
+
     var characteristic : Characteristic?
     var isRaw : Bool?
     
@@ -32,6 +33,7 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
                 updatePeriodTextField.text = "\(updatePeriod.period)"
             }
         }
+        updatePeriodTextField.becomeFirstResponder()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -39,7 +41,7 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(_ textField:UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let enteredPeriod = self.updatePeriodTextField.text, let isRaw = isRaw, let value = UInt16(enteredPeriod), !enteredPeriod.isEmpty {
             let rawValue : UInt16
             if  isRaw {
@@ -48,13 +50,13 @@ class SetUpdatePeriodViewController: UITableViewController, UITextFieldDelegate 
                 rawValue = value / 10
             }
             if let rawPeriod = UInt8(uintValue:rawValue), let period = TiSensorTag.AccelerometerService.UpdatePeriod(rawValue:rawPeriod) {
-                let writeFuture = self.characteristic?.write(period, timeout:10.0)
+                let writeFuture = self.characteristic?.write(period, timeout: 5.0)
                 writeFuture?.onSuccess {_ in
                     textField.resignFirstResponder()
                     _ = self.navigationController?.popViewController(animated: true)
                 }
                 writeFuture?.onFailure { [weak self] error in
-                    self?.present(UIAlertController.alertOnError(error), animated:true) { _ in
+                    self?.present(UIAlertController.alertOnError(error), animated:true) { () -> Void in
                         textField.resignFirstResponder()
                         _ = self?.navigationController?.popViewController(animated: true)
                     }

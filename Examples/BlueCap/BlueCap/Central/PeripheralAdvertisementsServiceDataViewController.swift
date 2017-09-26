@@ -36,7 +36,7 @@ class PeripheralAdvertisementsServiceDataViewController: UITableViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         _ = self.navigationController?.popToRootViewController(animated: false)
         Logger.debug()
     }

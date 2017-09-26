@@ -66,7 +66,7 @@ public protocol CLLocationManagerInjectable {
     // MARK: Deferred Location Updates
     
     static func deferredLocationUpdatesAvailable() -> Bool
-    func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: TimeInterval)
+    func allowDeferredLocationUpdates(untilTraveled distance: CLLocationDistance, timeout: TimeInterval)
 
     // MARK: Significant Change in Location
     
@@ -301,7 +301,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
             return requestLocationPromise.future
         }
         requestLocationPromise = Promise<[CLLocation]>()
-        return authorize(authorization, context: context).flatMap(context: context) { [weak self] in
+        return authorize(authorization, context: context).flatMap(context: context) { [weak self] _ -> Future<[CLLocation]> in
             guard let strongSelf = self else {
                 throw LocationError.unlikelyFailure
             }
@@ -342,9 +342,9 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         return CLLocationManager.deferredLocationUpdatesAvailable()
     }
 
-    public func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: TimeInterval) -> Future<Void> {
+    public func allowDeferredLocationUpdates(untilTraveled distance: CLLocationDistance, timeout: TimeInterval) -> Future<Void> {
         self.deferredLocationUpdatePromise = Promise<Void>()
-        self.clLocationManager.allowDeferredLocationUpdatesUntilTraveled(distance, timeout: timeout)
+        self.clLocationManager.allowDeferredLocationUpdates(untilTraveled: distance, timeout: timeout)
         return self.deferredLocationUpdatePromise!.future
     }
 
@@ -386,7 +386,7 @@ public class LocationManager : NSObject, CLLocationManagerDelegate {
         if let error = error {
             self.deferredLocationUpdatePromise?.failure(error)
         } else {
-            self.deferredLocationUpdatePromise?.success()
+            self.deferredLocationUpdatePromise?.success(())
         }
     }
 

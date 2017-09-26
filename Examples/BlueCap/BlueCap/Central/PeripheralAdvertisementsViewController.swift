@@ -60,7 +60,7 @@ class PeripheralAdvertisementsViewController : UITableViewController {
             self.isConnectableValueLabel.text = isConnectable.stringValue
             self.isConnectableLabel.textColor = UIColor.black
         }
-        if let mfgData = peripheralAdvertisements.manufactuereData {
+        if let mfgData = peripheralAdvertisements.manufacturerData {
             self.manufacturerDataValueLabel.text = mfgData.hexStringValue()
             self.manufacturerDataLabel.textColor = UIColor.black
         }
@@ -92,7 +92,7 @@ class PeripheralAdvertisementsViewController : UITableViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         _ = navigationController?.popToRootViewController(animated: false)
     }
     

@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 import BlueCapKit
 
-class ViewController: UITableViewController, UITextFieldDelegate {
+class ViewController: UITableViewController,  UITextFieldDelegate {
 
     @IBOutlet var stateLabel: UILabel!
     @IBOutlet var uuidTextField: UITextField!
@@ -86,20 +86,17 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     func startMonitoring() {
         self.progressView.show()
         self.uuidTextField.isEnabled = false
-        beaconRangingFuture = beaconManager.startMonitoring(for: beaconRegion, authorization: .authorizedWhenInUse).flatMap{ [unowned self] state -> FutureStream<[Beacon]> in
+        beaconRangingFuture = beaconManager.startMonitoring(for: beaconRegion, authorization: .authorizedAlways).flatMap{ [unowned self] state -> FutureStream<[Beacon]> in
             self.progressView.remove()
             switch state {
             case .start:
                 self.setStartedMonitoring()
-                self.isRanging = true
-                return self.beaconManager.startRangingBeacons(in: self.beaconRegion)
+                self.isRanging = false
+                throw AppError.started
             case .inside:
                 self.setInsideRegion()
-                guard !self.beaconManager.isRangingRegion(identifier: self.beaconRegion.identifier) else {
-                    throw AppError.rangingBeacon
-                }
                 self.isRanging = true
-                return self.beaconManager.startRangingBeacons(in: self.beaconRegion)
+                return self.beaconManager.startRangingBeacons(in: self.beaconRegion, authorization: .authorizedAlways)
             case .outside:
                 self.setOutsideRegion()
                 self.beaconManager.stopRangingBeacons(in: self.beaconRegion)
@@ -108,17 +105,16 @@ class ViewController: UITableViewController, UITextFieldDelegate {
                 throw AppError.unknownState
             }
         }
-        beaconRangingFuture!.onSuccess { [unowned self] beacons in
+        beaconRangingFuture?.onSuccess { [unowned self] beacons in
             guard self.isRanging else {
                 return
             }
             if UIApplication.shared.applicationState == .active && beacons.count > 0 {
                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppNotification.didUpdateBeacon), object: self.beaconRegion)
-                self.setInsideRegion()
             }
             self.beaconsLabel.text = "\(beacons.count)"
         }
-        beaconRangingFuture!.onFailure { [unowned self]  error in
+        beaconRangingFuture?.onFailure { [unowned self]  error in
             if error is AppError {
                 return
             }
@@ -128,6 +124,7 @@ class ViewController: UITableViewController, UITextFieldDelegate {
     }
     
     // UITextFieldDelegate
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let newValue = self.uuidTextField.text, let uuid = UUID(uuidString: newValue) else {
             self.present(UIAlertController.alertOnErrorWithMessage("UUID is Invalid"), animated: true, completion: nil)

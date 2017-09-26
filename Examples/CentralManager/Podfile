@@ -1,8 +1,8 @@
-platform :ios, '9.0'
+platform :ios, '11.0'
 use_frameworks!
 
 target 'CentralManager' do
-  pod 'BlueCapKit', '~> 0.5.4'
+  pod 'BlueCapKit', :path => '../../'
 end
 
 post_install do |installer|

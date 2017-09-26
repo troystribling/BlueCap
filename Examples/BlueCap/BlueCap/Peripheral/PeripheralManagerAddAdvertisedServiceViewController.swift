@@ -44,7 +44,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         NotificationCenter.default.removeObserver(self)
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         Logger.debug()
         guard let peripheralManagerViewController = peripheralManagerViewController else {
             return
@@ -64,6 +64,7 @@ class PeripheralManagerAddAdvertisedServiceViewController: UITableViewController
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralManagerAddAdverstisedServiceCell, for: indexPath) as! NameUUIDCell
         let service = services[indexPath.row]
         cell.nameLabel.text = service.name
+        cell.uuidLabel.text = service.uuid.uuidString
         return cell
     }
     

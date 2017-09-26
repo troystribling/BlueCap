@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ConfigureCharacteristicReadWriteTimeoutViewController: UIViewController {
+class ConfigureCharacteristicReadWriteTimeoutViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var readWriteTimeoutTextField : UITextField!
     
@@ -23,6 +23,7 @@ class ConfigureCharacteristicReadWriteTimeoutViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        readWriteTimeoutTextField.becomeFirstResponder()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -30,7 +31,7 @@ class ConfigureCharacteristicReadWriteTimeoutViewController: UIViewController {
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let readWriteTimeoutText = self.readWriteTimeoutTextField.text, let readWriteTimeout = UInt(readWriteTimeoutText) , !readWriteTimeoutText.isEmpty  {
             ConfigStore.setCharacteristicReadWriteTimeout(readWriteTimeout)
             _ = self.navigationController?.popToRootViewController(animated: true)

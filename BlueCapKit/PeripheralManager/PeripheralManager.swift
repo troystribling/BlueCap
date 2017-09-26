@@ -361,10 +361,10 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         } else {
             Logger.debug("success")
             if let afterAdvertisingStartedPromise = self.afterAdvertisingStartedPromise, !afterAdvertisingStartedPromise.completed {
-                afterAdvertisingStartedPromise.success()
+                afterAdvertisingStartedPromise.success(())
             }
             if let afterBeaconAdvertisingStartedPromise = self.afterBeaconAdvertisingStartedPromise, !afterBeaconAdvertisingStartedPromise.completed {
-                afterBeaconAdvertisingStartedPromise.success()
+                afterBeaconAdvertisingStartedPromise.success(())
             }
         }
     }
@@ -380,7 +380,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
             afterServiceAddPromise.failure(error)
         } else {
             Logger.debug("success")
-            afterServiceAddPromise.success()
+            afterServiceAddPromise.success(())
         }
     }
 
@@ -452,7 +452,7 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
                         strongSelf.timeoutStopAdvertising(timeout, sequence: sequence, count: count + 1)
                     }
                 } else {
-                    strongSelf.afterAdvertisingStoppedPromise?.success()
+                    strongSelf.afterAdvertisingStoppedPromise?.success(())
                 }
             }
         }

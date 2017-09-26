@@ -15,7 +15,7 @@ class SerialUUIDQueue {
     var uuids = [UUID]()
 
     var isEmpty: Bool {
-        return queue.sync { self.uuids.count == 0 }
+        return self.uuids.count == 0
     }
 
     var count: Int {
@@ -23,37 +23,33 @@ class SerialUUIDQueue {
     }
 
     func push(_ uuid: UUID) {
-        queue.sync {
-            guard !self.uuids.contains(uuid) else {
-                return
-            }
-            Logger.debug("queueing \(uuid)")
-            self.uuids.append(uuid)
+        guard !self.uuids.contains(uuid) else {
+            return
         }
+        Logger.debug("queueing \(uuid)")
+        self.uuids.append(uuid)
     }
 
     func shift() -> UUID? {
-        return queue.sync {
-            guard self.uuids.count > 0 else {
-                return nil
-            }
-            let uuid = self.uuids.remove(at: 0)
-            Logger.debug("dequeueing \(uuid)")
-            return uuid
+        guard self.uuids.count > 0 else {
+            return nil
         }
+        let uuid = self.uuids.remove(at: 0)
+        Logger.debug("dequeueing \(uuid)")
+        return uuid
     }
 
     func removeAll() {
-        queue.sync { self.uuids.removeAll() }
+        self.uuids.removeAll()
     }
 
     func set(_ peripherals: [Peripheral]) {
-        queue.sync { peripherals.forEach { peripheral in
+        peripherals.forEach { peripheral in
             guard !self.uuids.contains(peripheral.identifier) else {
                 return
             }
             self.uuids.append(peripheral.identifier)
-        } }
+        }
     }
 }
 
@@ -164,7 +160,7 @@ class PeripheralsViewController : UITableViewController {
     }
 
     func alertAndStopScan(message: String) {
-        present(UIAlertController.alert(message: message), animated:true) { [weak self] _ in
+        present(UIAlertController.alert(message: message), animated:true) { [weak self] () -> Void in
             self.forEach { strongSelf in
                 strongSelf.stopScanAndToggleOff()
                 strongSelf.setScanButton()
@@ -217,13 +213,13 @@ class PeripheralsViewController : UITableViewController {
         return !connectingPeripherals.contains(peripheral.identifier)
     }
 
-    func didBecomeActive() {
+    @objc func didBecomeActive() {
         Logger.debug()
         tableView.reloadData()
         setScanButton()
-    }
+     }
 
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         Logger.debug()
         stopScanAndToggleOff()
     }
@@ -249,6 +245,9 @@ class PeripheralsViewController : UITableViewController {
         guard canScanAndConnect else {
             Logger.debug("connection updates disabled")
             disconnectConnectingPeripherals()
+            return
+        }
+        guard Singletons.discoveryManager.discoveredPeripherals.count > 1 else {
             return
         }
         let maxConnections = ConfigStore.getMaximumPeripheralsConnected()
@@ -408,7 +407,7 @@ class PeripheralsViewController : UITableViewController {
         Singletons.scanningManager.stopScanning()
     }
 
-    func toggleScan(_ sender: AnyObject) {
+    @objc func toggleScan(_ sender: AnyObject) {
         guard !Singletons.beaconManager.isMonitoring else {
             present(UIAlertController.alert(message: "iBeacon monitoring is active. Cannot scan and monitor iBeacons simutaneously. Stop iBeacon monitoring to start scan"), animated:true, completion:nil)
             return
@@ -529,7 +528,7 @@ class PeripheralsViewController : UITableViewController {
             }
             return peripheral.services.map { $0.discoverAllCharacteristics(timeout: scanTimeout) }.sequence()
         }
-        peripheralDiscoveryFuture.onSuccess { [weak self, weak peripheral] _ in
+        peripheralDiscoveryFuture.onSuccess { [weak self, weak peripheral] (_) -> Void in
             guard let peripheral = peripheral else {
                 return
             }
@@ -540,7 +539,7 @@ class PeripheralsViewController : UITableViewController {
                 strongSelf.updateWhenActive()
             }
         }
-        peripheralDiscoveryFuture.onFailure { [weak self, weak peripheral] error in
+        peripheralDiscoveryFuture.onFailure { [weak self, weak peripheral] (error) -> Void in
             guard let peripheral = peripheral else {
                 return
             }
@@ -566,7 +565,7 @@ class PeripheralsViewController : UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainStoryboard.peripheralCell, for: indexPath) as! PeripheralCell
         let peripheral = peripherals[indexPath.row]
         cell.nameLabel.text = peripheral.name
-        if peripheral.state == .connected || peripheral.services.count > 0 || discoveredPeripherals.contains(peripheral.identifier) {
+        if peripheral.state == .connected || discoveredPeripherals.contains(peripheral.identifier) {
             cell.nameLabel.textColor = UIColor.black
         } else {
             cell.nameLabel.textColor = UIColor.lightGray
@@ -575,7 +574,10 @@ class PeripheralsViewController : UITableViewController {
             cell.nameLabel.textColor = UIColor.black
             cell.stateLabel.text = "Connected"
             cell.stateLabel.textColor = UIColor(red:0.1, green:0.7, blue:0.1, alpha:0.5)
-        } else if connectedPeripherals.contains(peripheral.identifier) && discoveredPeripherals.contains(peripheral.identifier) && connectingPeripherals.contains(peripheral.identifier) {
+        } else if connectedPeripherals.contains(peripheral.identifier) &&
+               discoveredPeripherals.contains(peripheral.identifier) &&
+               connectingPeripherals.contains(peripheral.identifier)
+        {
             cell.stateLabel.text = "Discovered"
             cell.stateLabel.textColor = UIColor(red:0.4, green:0.75, blue:1.0, alpha:0.5)
         } else if discoveredPeripherals.contains(peripheral.identifier) && connectingPeripherals.contains(peripheral.identifier) {

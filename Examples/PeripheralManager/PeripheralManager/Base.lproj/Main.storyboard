@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="W4p-td-jxE">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="W4p-td-jxE">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13165.3"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -33,24 +33,28 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertise" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="teB-n6-0e4">
-                                                    <rect key="frame" x="20" y="19" width="88" height="25"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="vTf-mE-M5l">
-                                                    <rect key="frame" x="531" y="16" width="51" height="31"/>
-                                                    <connections>
-                                                        <action selector="toggleAdvertise:" destination="W4p-td-jxE" eventType="valueChanged" id="7m4-Pw-PFB"/>
-                                                    </connections>
-                                                </switch>
+                                                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zYR-pC-UZZ">
+                                                    <rect key="frame" x="8" y="14.5" width="359" height="31"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Advertise" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="teB-n6-0e4">
+                                                            <rect key="frame" x="0.0" y="0.0" width="310" height="31"/>
+                                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="vTf-mE-M5l">
+                                                            <rect key="frame" x="310" y="0.0" width="51" height="31"/>
+                                                            <connections>
+                                                                <action selector="toggleAdvertise:" destination="W4p-td-jxE" eventType="valueChanged" id="7m4-Pw-PFB"/>
+                                                            </connections>
+                                                        </switch>
+                                                    </subviews>
+                                                </stackView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="teB-n6-0e4" firstAttribute="top" secondItem="V7D-ae-b94" secondAttribute="topMargin" constant="11" id="PfN-Jh-C5R"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="vTf-mE-M5l" secondAttribute="trailing" constant="12" id="dVc-i4-MPe"/>
-                                                <constraint firstItem="vTf-mE-M5l" firstAttribute="top" secondItem="V7D-ae-b94" secondAttribute="topMargin" constant="8" id="e1B-p5-rMQ"/>
-                                                <constraint firstItem="teB-n6-0e4" firstAttribute="leading" secondItem="V7D-ae-b94" secondAttribute="leadingMargin" constant="12" id="n3O-UL-745"/>
+                                                <constraint firstItem="zYR-pC-UZZ" firstAttribute="centerY" secondItem="V7D-ae-b94" secondAttribute="centerY" id="41z-QW-2il"/>
+                                                <constraint firstItem="zYR-pC-UZZ" firstAttribute="leading" secondItem="V7D-ae-b94" secondAttribute="leadingMargin" id="7CW-fP-ohY"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="zYR-pC-UZZ" secondAttribute="trailing" id="rDj-Vo-A62"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -61,24 +65,28 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ord-Gz-DQs">
-                                                    <rect key="frame" x="20" y="17" width="71" height="25"/>
-                                                    <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="GyD-6e-bBB">
-                                                    <rect key="frame" x="531" y="16" width="51" height="31"/>
-                                                    <connections>
-                                                        <action selector="toggleEnabled:" destination="W4p-td-jxE" eventType="valueChanged" id="Tj8-qy-WDn"/>
-                                                    </connections>
-                                                </switch>
+                                                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bcG-RY-ZQQ">
+                                                    <rect key="frame" x="8" y="14.5" width="359" height="31"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ord-Gz-DQs">
+                                                            <rect key="frame" x="0.0" y="0.0" width="310" height="31"/>
+                                                            <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="GyD-6e-bBB">
+                                                            <rect key="frame" x="310" y="0.0" width="51" height="31"/>
+                                                            <connections>
+                                                                <action selector="toggleEnabled:" destination="W4p-td-jxE" eventType="valueChanged" id="Tj8-qy-WDn"/>
+                                                            </connections>
+                                                        </switch>
+                                                    </subviews>
+                                                </stackView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="Ord-Gz-DQs" firstAttribute="top" secondItem="piD-vB-ZCW" secondAttribute="topMargin" constant="9" id="SS1-56-1aW"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="GyD-6e-bBB" secondAttribute="trailing" constant="12" id="loi-s8-q0p"/>
-                                                <constraint firstItem="Ord-Gz-DQs" firstAttribute="leading" secondItem="piD-vB-ZCW" secondAttribute="leadingMargin" constant="12" id="oJO-Aa-c4i"/>
-                                                <constraint firstItem="GyD-6e-bBB" firstAttribute="top" secondItem="piD-vB-ZCW" secondAttribute="topMargin" constant="8" id="w0X-3d-yvz"/>
+                                                <constraint firstItem="bcG-RY-ZQQ" firstAttribute="centerY" secondItem="piD-vB-ZCW" secondAttribute="centerY" id="GaT-WP-TdH"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="bcG-RY-ZQQ" secondAttribute="trailing" id="Nas-B2-tYH"/>
+                                                <constraint firstItem="bcG-RY-ZQQ" firstAttribute="leading" secondItem="piD-vB-ZCW" secondAttribute="leadingMargin" id="gf9-tT-yfD"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -86,236 +94,204 @@
                             </tableViewSection>
                             <tableViewSection headerTitle="Update Period" id="Wmu-oZ-a2o">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="ATO-0Z-9LG">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" textLabel="wAU-eW-dhU" detailTextLabel="kIe-Q7-vCa" rowHeight="60" style="IBUITableViewCellStyleValue1" id="ATO-0Z-9LG">
                                         <rect key="frame" x="0.0" y="223.5" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ATO-0Z-9LG" id="gur-ia-1oR">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value (ms)" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LU0-RC-EjJ">
-                                                    <rect key="frame" x="20" y="17" width="101" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Value (ms)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wAU-eW-dhU">
+                                                    <rect key="frame" x="16" y="18" width="101" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G7t-aT-zue">
-                                                    <rect key="frame" x="567" y="17" width="13" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kIe-Q7-vCa">
+                                                    <rect key="frame" x="347" y="18" width="13" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="G7t-aT-zue" firstAttribute="top" secondItem="gur-ia-1oR" secondAttribute="topMargin" constant="9" id="D0H-Yd-Tq1"/>
-                                                <constraint firstItem="LU0-RC-EjJ" firstAttribute="top" secondItem="gur-ia-1oR" secondAttribute="topMargin" constant="9" id="WtD-gj-nAK"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="G7t-aT-zue" secondAttribute="trailing" constant="12" id="zK0-dp-DKj"/>
-                                                <constraint firstItem="LU0-RC-EjJ" firstAttribute="leading" secondItem="gur-ia-1oR" secondAttribute="leadingMargin" constant="12" id="zbW-hS-7Qv"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="N9T-zc-m28">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" textLabel="Tcv-7M-fKH" detailTextLabel="T9h-3S-r2F" rowHeight="60" style="IBUITableViewCellStyleValue1" id="N9T-zc-m28">
                                         <rect key="frame" x="0.0" y="283.5" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="N9T-zc-m28" id="ztB-Kp-4lS">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Raw Value" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GhO-TH-wKM">
-                                                    <rect key="frame" x="20" y="17" width="94" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Raw Value" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Tcv-7M-fKH">
+                                                    <rect key="frame" x="16" y="18" width="94" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pAY-6I-cU8">
-                                                    <rect key="frame" x="567" y="17" width="13" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="T9h-3S-r2F">
+                                                    <rect key="frame" x="347" y="18" width="13" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="GhO-TH-wKM" firstAttribute="leading" secondItem="ztB-Kp-4lS" secondAttribute="leadingMargin" constant="12" id="0OV-9S-BpY"/>
-                                                <constraint firstItem="pAY-6I-cU8" firstAttribute="top" secondItem="ztB-Kp-4lS" secondAttribute="topMargin" constant="9" id="GPJ-ZW-TXl"/>
-                                                <constraint firstItem="GhO-TH-wKM" firstAttribute="top" secondItem="ztB-Kp-4lS" secondAttribute="topMargin" constant="9" id="UC3-ig-aab"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="pAY-6I-cU8" secondAttribute="trailing" constant="12" id="v5k-i2-jch"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Acceleration (g)" id="WLP-9a-soq">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="YuK-fW-EyT">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" textLabel="epr-4B-eu5" detailTextLabel="YXw-0W-TBa" rowHeight="60" style="IBUITableViewCellStyleValue1" id="YuK-fW-EyT">
                                         <rect key="frame" x="0.0" y="391.5" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="YuK-fW-EyT" id="riy-1W-ETs">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GtK-TN-cX3">
-                                                    <rect key="frame" x="20" y="17" width="12" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="X" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="epr-4B-eu5">
+                                                    <rect key="frame" x="16" y="18" width="12" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SVK-Z8-RqJ">
-                                                    <rect key="frame" x="548" y="17" width="32" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0.0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="YXw-0W-TBa">
+                                                    <rect key="frame" x="328.5" y="18" width="31.5" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="SVK-Z8-RqJ" secondAttribute="trailing" constant="12" id="2Mv-pj-mos"/>
-                                                <constraint firstItem="GtK-TN-cX3" firstAttribute="leading" secondItem="riy-1W-ETs" secondAttribute="leadingMargin" constant="12" id="fd1-1d-fuX"/>
-                                                <constraint firstItem="SVK-Z8-RqJ" firstAttribute="top" secondItem="riy-1W-ETs" secondAttribute="topMargin" constant="9" id="kSY-dz-o5x"/>
-                                                <constraint firstItem="GtK-TN-cX3" firstAttribute="top" secondItem="riy-1W-ETs" secondAttribute="topMargin" constant="9" id="ofo-Zy-A2m"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="ryZ-RP-i9K">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" textLabel="MIG-Kz-MyC" detailTextLabel="DBf-pc-PWQ" rowHeight="60" style="IBUITableViewCellStyleValue1" id="ryZ-RP-i9K">
                                         <rect key="frame" x="0.0" y="451.5" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ryZ-RP-i9K" id="qhs-SN-v4m">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Y" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d2C-CQ-B2n">
-                                                    <rect key="frame" x="20" y="17" width="12" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Y" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MIG-Kz-MyC">
+                                                    <rect key="frame" x="16" y="18" width="12" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yCm-ac-0mL">
-                                                    <rect key="frame" x="548" y="17" width="32" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0.0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DBf-pc-PWQ">
+                                                    <rect key="frame" x="328.5" y="18" width="31.5" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="yCm-ac-0mL" firstAttribute="top" secondItem="qhs-SN-v4m" secondAttribute="topMargin" constant="9" id="5y0-nL-aDA"/>
-                                                <constraint firstItem="d2C-CQ-B2n" firstAttribute="leading" secondItem="qhs-SN-v4m" secondAttribute="leadingMargin" constant="12" id="Ifg-cm-zJI"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="yCm-ac-0mL" secondAttribute="trailing" constant="12" id="Kwf-eq-GtF"/>
-                                                <constraint firstItem="d2C-CQ-B2n" firstAttribute="top" secondItem="qhs-SN-v4m" secondAttribute="topMargin" constant="9" id="o3b-oS-b0C"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="emO-Pt-Rb8">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" textLabel="0wC-wY-G9Z" detailTextLabel="dbp-7a-0uW" rowHeight="60" style="IBUITableViewCellStyleValue1" id="emO-Pt-Rb8">
                                         <rect key="frame" x="0.0" y="511.5" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="emO-Pt-Rb8" id="oJe-n8-P7h">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Z" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qe5-Ak-qmz">
-                                                    <rect key="frame" x="20" y="17" width="11" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Z" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0wC-wY-G9Z">
+                                                    <rect key="frame" x="16" y="18" width="11" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0.0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K23-2m-y28">
-                                                    <rect key="frame" x="548" y="17" width="32" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0.0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dbp-7a-0uW">
+                                                    <rect key="frame" x="328.5" y="18" width="31.5" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="Qe5-Ak-qmz" firstAttribute="top" secondItem="oJe-n8-P7h" secondAttribute="topMargin" constant="9" id="W8a-1u-EKj"/>
-                                                <constraint firstItem="K23-2m-y28" firstAttribute="top" secondItem="oJe-n8-P7h" secondAttribute="topMargin" constant="9" id="oMN-eo-SjU"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="K23-2m-y28" secondAttribute="trailing" constant="12" id="olY-hs-Fg2"/>
-                                                <constraint firstItem="Qe5-Ak-qmz" firstAttribute="leading" secondItem="oJe-n8-P7h" secondAttribute="leadingMargin" constant="12" id="pUL-io-VfY"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Raw Acceleration" id="kIB-Kl-Jag">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="7lW-lk-55c">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" textLabel="ggQ-jJ-S5h" detailTextLabel="RS0-5S-b8x" rowHeight="60" style="IBUITableViewCellStyleValue1" id="7lW-lk-55c">
                                         <rect key="frame" x="0.0" y="619.5" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7lW-lk-55c" id="H8d-fE-GkI">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="X" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="egl-Vl-mlF">
-                                                    <rect key="frame" x="20" y="17" width="12" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="X" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ggQ-jJ-S5h">
+                                                    <rect key="frame" x="16" y="18" width="12" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N7L-4n-9xO">
-                                                    <rect key="frame" x="567" y="17" width="13" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="RS0-5S-b8x">
+                                                    <rect key="frame" x="347" y="18" width="13" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="N7L-4n-9xO" firstAttribute="top" secondItem="H8d-fE-GkI" secondAttribute="topMargin" constant="9" id="18D-6S-v1k"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="N7L-4n-9xO" secondAttribute="trailing" constant="12" id="Gbb-sK-uE0"/>
-                                                <constraint firstItem="egl-Vl-mlF" firstAttribute="leading" secondItem="H8d-fE-GkI" secondAttribute="leadingMargin" constant="12" id="Kky-zA-u8z"/>
-                                                <constraint firstItem="egl-Vl-mlF" firstAttribute="top" secondItem="H8d-fE-GkI" secondAttribute="topMargin" constant="9" id="VV8-Bu-hSb"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="rdk-ih-n7z">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" textLabel="iKm-Cb-1Ga" detailTextLabel="Zxg-Wy-mdb" rowHeight="60" style="IBUITableViewCellStyleValue1" id="rdk-ih-n7z">
                                         <rect key="frame" x="0.0" y="679.5" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="rdk-ih-n7z" id="lll-br-XSI">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Y" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LeP-sc-MRP">
-                                                    <rect key="frame" x="20" y="17" width="12" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Y" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="iKm-Cb-1Ga">
+                                                    <rect key="frame" x="16" y="18" width="12" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yh3-xW-luT">
-                                                    <rect key="frame" x="567" y="17" width="13" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Zxg-Wy-mdb">
+                                                    <rect key="frame" x="347" y="18" width="13" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="Yh3-xW-luT" secondAttribute="trailing" constant="12" id="Cmt-yU-rsg"/>
-                                                <constraint firstItem="Yh3-xW-luT" firstAttribute="top" secondItem="lll-br-XSI" secondAttribute="topMargin" constant="9" id="aK5-9D-cDF"/>
-                                                <constraint firstItem="LeP-sc-MRP" firstAttribute="top" secondItem="lll-br-XSI" secondAttribute="topMargin" constant="9" id="f8Q-B0-ade"/>
-                                                <constraint firstItem="LeP-sc-MRP" firstAttribute="leading" secondItem="lll-br-XSI" secondAttribute="leadingMargin" constant="12" id="gdE-gg-jgQ"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="60" id="1u4-e5-5rf">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" textLabel="5N3-XO-fJG" detailTextLabel="W79-b5-oyz" rowHeight="60" style="IBUITableViewCellStyleValue1" id="1u4-e5-5rf">
                                         <rect key="frame" x="0.0" y="739.5" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1u4-e5-5rf" id="rbj-ZZ-dw0">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Z" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fro-xw-OdW">
-                                                    <rect key="frame" x="20" y="17" width="11" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Z" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5N3-XO-fJG">
+                                                    <rect key="frame" x="16" y="18" width="11" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cfI-Mm-wVL">
-                                                    <rect key="frame" x="567" y="17" width="13" height="25"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="W79-b5-oyz">
+                                                    <rect key="frame" x="347" y="18" width="13" height="25"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="fro-xw-OdW" firstAttribute="leading" secondItem="rbj-ZZ-dw0" secondAttribute="leadingMargin" constant="12" id="BWV-Iw-s5v"/>
-                                                <constraint firstItem="cfI-Mm-wVL" firstAttribute="top" secondItem="rbj-ZZ-dw0" secondAttribute="topMargin" constant="9" id="DaJ-Jb-EoT"/>
-                                                <constraint firstItem="fro-xw-OdW" firstAttribute="top" secondItem="rbj-ZZ-dw0" secondAttribute="topMargin" constant="9" id="pBM-gs-Bve"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="cfI-Mm-wVL" secondAttribute="trailing" constant="12" id="ugc-S7-HPJ"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
@@ -329,16 +305,16 @@
                     <connections>
                         <outlet property="enableLabel" destination="Ord-Gz-DQs" id="adw-0p-FbI"/>
                         <outlet property="enabledSwitch" destination="GyD-6e-bBB" id="CNE-fR-5Tw"/>
-                        <outlet property="rawUpdatePeriodlabel" destination="pAY-6I-cU8" id="KB2-Ij-sAQ"/>
+                        <outlet property="rawUpdatePeriodlabel" destination="T9h-3S-r2F" id="81K-dR-OXc"/>
                         <outlet property="startAdvertisingLabel" destination="teB-n6-0e4" id="9XS-rK-Myo"/>
                         <outlet property="startAdvertisingSwitch" destination="vTf-mE-M5l" id="Kd6-xs-OpZ"/>
-                        <outlet property="updatePeriodLabel" destination="G7t-aT-zue" id="4WA-SP-CdA"/>
-                        <outlet property="xAccelerationLabel" destination="SVK-Z8-RqJ" id="yD6-1h-jZo"/>
-                        <outlet property="xRawAccelerationLabel" destination="N7L-4n-9xO" id="es3-w7-aEV"/>
-                        <outlet property="yAccelerationLabel" destination="yCm-ac-0mL" id="zPe-A0-bn7"/>
-                        <outlet property="yRawAccelerationLabel" destination="Yh3-xW-luT" id="Sot-qL-MVm"/>
-                        <outlet property="zAccelerationLabel" destination="K23-2m-y28" id="8cv-2q-abJ"/>
-                        <outlet property="zRawAccelerationLabel" destination="cfI-Mm-wVL" id="AS7-sy-wgY"/>
+                        <outlet property="updatePeriodLabel" destination="kIe-Q7-vCa" id="E2w-gD-1x1"/>
+                        <outlet property="xAccelerationLabel" destination="YXw-0W-TBa" id="DbV-JV-6kk"/>
+                        <outlet property="xRawAccelerationLabel" destination="RS0-5S-b8x" id="VIJ-vU-2ya"/>
+                        <outlet property="yAccelerationLabel" destination="DBf-pc-PWQ" id="R4s-fd-knl"/>
+                        <outlet property="yRawAccelerationLabel" destination="Zxg-Wy-mdb" id="pFg-Bm-wU6"/>
+                        <outlet property="zAccelerationLabel" destination="dbp-7a-0uW" id="rSB-0g-fv2"/>
+                        <outlet property="zRawAccelerationLabel" destination="W79-b5-oyz" id="EIc-Ke-rJ6"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ght-LS-Mbe" userLabel="First Responder" sceneMemberID="firstResponder"/>

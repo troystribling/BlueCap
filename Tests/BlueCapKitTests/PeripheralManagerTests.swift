@@ -53,7 +53,7 @@ class PeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let future = peripheralManager.startAdvertising(self.peripheralName, uuids: [self.advertisedUUIDs])
         peripheralManager.didStartAdvertising(nil)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             XCTAssert(mock.startAdvertisingCalled)
             XCTAssert(peripheralManager.isAdvertising)
             if let advertisedData = mock.advertisementData, let name = advertisedData[CBAdvertisementDataLocalNameKey] as? String, let uuids = advertisedData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] {
@@ -96,7 +96,7 @@ class PeripheralManagerTests: XCTestCase {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let future = peripheralManager.startAdvertising(BeaconRegion(proximityUUID: UUID(), identifier: "Beacon Regin"))
         peripheralManager.didStartAdvertising(nil)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             XCTAssert(mock.startAdvertisingCalled)
             XCTAssert(peripheralManager.isAdvertising)
         }
@@ -126,7 +126,7 @@ class PeripheralManagerTests: XCTestCase {
     func testStopAdvertising_WhenAdvertising_CompletesSuccessfully() {
         let (mock, peripheralManager) = createPeripheralManager(true, state: .poweredOn)
         let future = peripheralManager.stopAdvertising()
-        XCTAssertFutureSucceeds(future, timeout: 5.0) {
+        XCTAssertFutureSucceeds(future, timeout: 5.0) { _ in
             XCTAssert(mock.stopAdvertisingCalled)
         }
     }
@@ -134,7 +134,7 @@ class PeripheralManagerTests: XCTestCase {
     func testStopAdvertising_WhenNotAdvertising_StopsAdvertising() {
         let (mock, peripheralManager) = createPeripheralManager(false, state: .poweredOn)
         let future = peripheralManager.stopAdvertising()
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { (_) -> Void in
             XCTAssertFalse(mock.stopAdvertisingCalled)
         }
     }
@@ -155,7 +155,7 @@ class PeripheralManagerTests: XCTestCase {
         let service = createPeripheralManagerService()
         let future = peripheralManager.add(service)
         peripheralManager.didAddService(service.cbMutableService, error: nil)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.addServiceCalled)
             XCTAssertEqual(peripheralServices.count, 1)
@@ -183,7 +183,7 @@ class PeripheralManagerTests: XCTestCase {
         peripheralManager.didAddService(services[0].cbMutableService, error: nil)
         let future = peripheralManager.add(services[1])
         peripheralManager.didAddService(services[1].cbMutableService, error: nil)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.addServiceCalled)
             XCTAssertEqual(peripheralServices.count, 2)
@@ -197,7 +197,7 @@ class PeripheralManagerTests: XCTestCase {
         let service = createPeripheralManagerService(peripheralManager)
         let future = peripheralManager.add(service)
         peripheralManager.didAddService(service.cbMutableService, error: nil)
-        XCTAssertFutureSucceeds(future, timeout: 5.0) {
+        XCTAssertFutureSucceeds(future, timeout: 5.0) { _ in
             peripheralManager.remove(service)
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.removeServiceCalled)
@@ -222,7 +222,7 @@ class PeripheralManagerTests: XCTestCase {
         let service = createPeripheralManagerService(peripheralManager)
         let future = peripheralManager.add(service)
         peripheralManager.didAddService(service.cbMutableService, error: nil)
-        XCTAssertFutureSucceeds(future, timeout: 5.0) {
+        XCTAssertFutureSucceeds(future, timeout: 5.0) { _ in
             peripheralManager.removeAllServices()
             let peripheralServices = peripheralManager.services
             XCTAssert(mock.removeAllServicesCalled, "CBPeripheralManager#removeAllServices not called")
@@ -237,7 +237,7 @@ class PeripheralManagerTests: XCTestCase {
         peripheralManager.didAddService(services[0].cbMutableService, error: nil)
         let future = peripheralManager.add(services[1])
         peripheralManager.didAddService(services[1].cbMutableService, error: nil)
-        XCTAssertFutureSucceeds(future, context: self.immediateContext) {
+        XCTAssertFutureSucceeds(future, context: self.immediateContext) { _ in
             peripheralManager.remove(services[0])
             XCTAssert(mock.removeServiceCalled)
             let peripheralServices = peripheralManager.services

@@ -86,7 +86,7 @@ public class Service {
             }
             Logger.debug("discovery success service name \(name), service uuid \(uuid)")
             if let characteristicsDiscoveredPromise = characteristicsDiscoveredPromise, !characteristicsDiscoveredPromise.completed {
-                characteristicsDiscoveredPromise.success()
+                characteristicsDiscoveredPromise.success(())
             }
         }
     }

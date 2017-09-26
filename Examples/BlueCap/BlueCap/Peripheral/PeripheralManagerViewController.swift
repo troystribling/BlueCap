@@ -118,7 +118,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     @IBAction func toggleAdvertise(_ sender:AnyObject) {
         if Singletons.peripheralManager.isAdvertising {
             let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
-            stopAdvertisingFuture.onSuccess { [weak self] in
+            stopAdvertisingFuture.onSuccess { [weak self] _ in
                 self?.setUIState()
             }
             stopAdvertisingFuture.onFailure { [weak self] _ in
@@ -138,7 +138,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
             }
         }
 
-        startAdvertiseFuture.onSuccess { [weak self] in
+        startAdvertiseFuture.onSuccess { [weak self] _ in
             self?.setUIState()
             self?.present(UIAlertController.alert(message: "Powered on and started advertising."), animated: true, completion: nil)
         }
@@ -163,8 +163,13 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
                     }, animated: true, completion: nil)
                 }
                 let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
-                stopAdvertisingFuture.onSuccess { strongSelf.setUIState() }
-                stopAdvertisingFuture.onFailure { _ in strongSelf.setUIState() }
+                stopAdvertisingFuture.onSuccess { _ in
+                    strongSelf.setUIState()
+
+                }
+                stopAdvertisingFuture.onFailure { _ in
+                    strongSelf.setUIState()
+                }
             }
         }
     }
@@ -220,7 +225,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
     }
 
     func alert(message: String) {
-        present(UIAlertController.alert(message: message), animated:true) { [weak self] _ in
+        present(UIAlertController.alert(message: message), animated:true) { [weak self] () -> Void in
             self.forEach { strongSelf in
                 Singletons.peripheralManager.reset()
             }

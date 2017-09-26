@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ConfigureMaximumPeripheralsDiscovered: UIViewController {
+class ConfigureMaximumPeripheralsDiscovered: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var maximumPeripheralsDiscoveredTextField: UITextField!
 
@@ -23,6 +23,7 @@ class ConfigureMaximumPeripheralsDiscovered: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        maximumPeripheralsDiscoveredTextField.becomeFirstResponder()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -30,7 +31,7 @@ class ConfigureMaximumPeripheralsDiscovered: UIViewController {
     }
 
     // UITextFieldDelegate
-    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let maxPeripheralsText = self.maximumPeripheralsDiscoveredTextField.text, let maxPeripherals = Int(maxPeripheralsText) , !maxPeripheralsText.isEmpty {
             ConfigStore.setMaximumPeripheralsDiscovered(maxPeripherals)
             _ = self.navigationController?.popToRootViewController(animated: true)

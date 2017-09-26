@@ -373,7 +373,7 @@ public class CentralManager : NSObject, CBCentralManagerDelegate {
                 }
             }
             if let completed = afterStateRestoredPromise?.completed, !completed {
-                afterStateRestoredPromise?.success()
+                afterStateRestoredPromise?.success(())
             }
         } else {
             if let completed = afterStateRestoredPromise?.completed, !completed {

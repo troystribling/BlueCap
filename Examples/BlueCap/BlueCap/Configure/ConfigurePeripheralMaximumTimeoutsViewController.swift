@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ConfigurePeripheralMaximumTimeoutsViewController: UIViewController {
+class ConfigurePeripheralMaximumTimeoutsViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var maximumTimeoutsTextField: UITextField!
     
@@ -23,6 +23,7 @@ class ConfigurePeripheralMaximumTimeoutsViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        maximumTimeoutsTextField.becomeFirstResponder()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -30,7 +31,7 @@ class ConfigurePeripheralMaximumTimeoutsViewController: UIViewController {
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let maximumTimeouts = self.maximumTimeoutsTextField.text, let maximumTimeoutsInt = UInt(maximumTimeouts) , !maximumTimeouts.isEmpty {
             ConfigStore.setPeripheralMaximumTimeouts(maximumTimeoutsInt)
             _ = self.navigationController?.popToRootViewController(animated: true)

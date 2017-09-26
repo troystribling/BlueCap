@@ -39,7 +39,7 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
         NotificationCenter.default.removeObserver(self)
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         Logger.debug()
         if let peripheralManagerViewController = self.peripheralManagerViewController {
             _ = self.navigationController?.popToViewController(peripheralManagerViewController, animated:false)
@@ -55,13 +55,13 @@ class PeripheralManagerServiceProfilesViewController : ServiceProfilesTableViewC
             service.characteristicsFromProfiles()
             self.progressView.show()
             let future = Singletons.peripheralManager.add(service)
-            future.onSuccess {
+            future.onSuccess { _ in
                 PeripheralStore.addSupportedPeripheralService(service.uuid)
                 _ = self.navigationController?.popViewController(animated: true)
                 _ = self.progressView.remove()
             }
-            future.onFailure { error in
-                self.progressView.remove().onSuccess {
+            future.onFailure { error -> Void in
+                self.progressView.remove().onSuccess { _ in
                     self.present(UIAlertController.alert(title: "Add Service Error", error: error), animated: true) {
                         _ = self.navigationController?.popViewController(animated: true)
                     }

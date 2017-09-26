@@ -89,7 +89,7 @@ class CLLocationManagerMock : CLLocationManagerInjectable {
         return _deferredLocationUpdatesAvailable
     }
 
-    func allowDeferredLocationUpdatesUntilTraveled(_ distance: CLLocationDistance, timeout: TimeInterval) {
+    func allowDeferredLocationUpdates(untilTraveled distance: CLLocationDistance, timeout: TimeInterval) {
         allowDeferredLocationUpdatesUntilTraveledCalled = true
         allowDeferredLocationUpdatesUntilTraveledDistance = distance
         allowDeferredLocationUpdatesUntilTraveledTimeout = timeout

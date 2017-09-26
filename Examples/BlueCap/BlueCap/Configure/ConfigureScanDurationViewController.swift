@@ -24,6 +24,7 @@ class ConfigureScanDurauinViewController : UIViewController, UITextFieldDelegate
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        timeoutDurationField.becomeFirstResponder()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

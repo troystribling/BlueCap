@@ -808,7 +808,7 @@ class FutureTests: XCTestCase {
     }
 
     func testFuture_WhenClosureFails_CompletesWithError() {
-        let result = future(context: TestContext.immediate) { Void -> Int in
+        let result = future(context: TestContext.immediate) { () -> Int in
             throw TestFailure.error
         }
         XCTAssertFutureFails(result, context: TestContext.immediate) { error in
@@ -893,7 +893,7 @@ class FutureTests: XCTestCase {
 
     func testFold_WhenFutureFails_CompletesWithError() {
         let futures = [future(Int(1)),
-                       future(context: TestContext.immediate) { Void -> Int in throw TestFailure.error },
+                       future(context: TestContext.immediate) { () -> Int in throw TestFailure.error },
                        future(Int(2))]
         let result = futures.fold(context: TestContext.immediate, initial: 0) { $0 + $1 }
         XCTAssertFutureFails(result, context: TestContext.immediate) { error in
@@ -914,7 +914,7 @@ class FutureTests: XCTestCase {
 
     func testSequence_WhenFutureFails_CompletesWithError() {
         let futures = [future(Int(1)),
-                       future(context: TestContext.immediate) { Void -> Int in throw TestFailure.error },
+                       future(context: TestContext.immediate) { () -> Int in throw TestFailure.error },
                        future(Int(2))]
         let result = futures.sequence(context: TestContext.immediate)
         XCTAssertFutureFails(result, context: TestContext.immediate) { error in

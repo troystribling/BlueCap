@@ -37,7 +37,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         NotificationCenter.default.removeObserver(self)
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         Logger.debug()
         guard let peripheralManagerViewController = self.peripheralManagerViewController else {
             return
@@ -79,7 +79,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
                 try characteristic.update(withString: stringValue)
                 _ = self.navigationController?.popViewController(animated: true)
             } catch let error {
-                present(UIAlertController.alert(error: error), animated:true) { [weak self] _ in
+                present(UIAlertController.alert(error: error), animated:true) { [weak self] () -> Void in
                     _ = self?.navigationController?.popViewController(animated: true)
                 }
             }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ConfigurePeripheralConnectionTimeoutViewController: UIViewController {
+class ConfigurePeripheralConnectionTimeoutViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet var peripheralConnectionTimeoutTextField: UITextField!
     
@@ -23,6 +23,7 @@ class ConfigurePeripheralConnectionTimeoutViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        peripheralConnectionTimeoutTextField.becomeFirstResponder()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -30,7 +31,7 @@ class ConfigurePeripheralConnectionTimeoutViewController: UIViewController {
     }
     
     // UITextFieldDelegate
-    func textFieldShouldReturn(_ textField: UITextField!) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let timeoutText = self.peripheralConnectionTimeoutTextField.text, let timeout = UInt(timeoutText)  , !timeoutText.isEmpty  {
             ConfigStore.setPeripheralConnectionTimeout(timeout)
             _ = self.navigationController?.popToRootViewController(animated: true)

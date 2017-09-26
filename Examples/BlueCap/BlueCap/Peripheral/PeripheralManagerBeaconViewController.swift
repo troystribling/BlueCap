@@ -109,10 +109,10 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
         }
         if Singletons.peripheralManager.isAdvertising {
             let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
-            stopAdvertisingFuture.onSuccess { [weak self] in
+            stopAdvertisingFuture.onSuccess { [weak self] _ in
                 self?.setUIState()
             }
-            stopAdvertisingFuture.onFailure { [weak self] error in
+            stopAdvertisingFuture.onFailure { [weak self] (error) -> Void in
                 self?.present(UIAlertController.alert(error: error) { _ in
                     Singletons.peripheralManager.reset()
                 }, animated: true, completion: nil)
@@ -124,7 +124,7 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
             let beaconRegion = BeaconRegion(proximityUUID: uuid, identifier: name, major: beaconMinorMajor[1], minor: beaconMinorMajor[0])
             let startAdvertiseFuture = Singletons.peripheralManager.startAdvertising(beaconRegion)
 
-            startAdvertiseFuture.onSuccess { [weak self] in
+            startAdvertiseFuture.onSuccess { [weak self] _ in
                 self?.setUIState()
                 self?.present(UIAlertController.alert(message: "Started advertising."), animated: true, completion: nil)
             }
@@ -132,8 +132,12 @@ class PeripheralManagerBeaconViewController: UITableViewController, UITextFieldD
             startAdvertiseFuture.onFailure { [weak self] error in
                 self.forEach { strongSelf in
                     let stopAdvertisingFuture = Singletons.peripheralManager.stopAdvertising()
-                    stopAdvertisingFuture.onSuccess { strongSelf.setUIState() }
-                    stopAdvertisingFuture.onFailure { _ in strongSelf.setUIState() }
+                    stopAdvertisingFuture.onSuccess { _ in
+                        strongSelf.setUIState()
+                    }
+                    stopAdvertisingFuture.onFailure { _ in
+                        strongSelf.setUIState()
+                    }
                     self?.present(UIAlertController.alert(error: error) { _ in
                         Singletons.peripheralManager.reset()
                     }, animated: true, completion: nil)

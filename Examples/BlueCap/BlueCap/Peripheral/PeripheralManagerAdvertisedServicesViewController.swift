@@ -48,7 +48,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         }
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         Logger.debug()
         guard let peripheralManagerViewController = self.peripheralManagerViewController else {
             return

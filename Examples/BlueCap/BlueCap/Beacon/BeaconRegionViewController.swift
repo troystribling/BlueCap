@@ -41,7 +41,7 @@ class BeaconRegionViewController: UIViewController, UITextFieldDelegate {
         NotificationCenter.default.removeObserver(self)
     }
     
-    func didEnterBackground() {
+    @objc func didEnterBackground() {
         Logger.debug()
         _ = self.navigationController?.popToRootViewController(animated: false)
     }

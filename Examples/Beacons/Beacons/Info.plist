@@ -22,10 +22,16 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>FutureLocation iBeacon example</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>FutureLocation iBeacon example</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>FutureLocation iBeacon example</string>
 	<key>NSLocationUsageDescription</key>
 	<string>FutureLocation iBeacon example</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
