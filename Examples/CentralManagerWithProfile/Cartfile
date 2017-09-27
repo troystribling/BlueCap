@@ -1,1 +1,1 @@
-github "troystribling/BlueCap" "swift4"
+github "troystribling/BlueCap" ~> 0.6
