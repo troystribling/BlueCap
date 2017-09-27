@@ -2,7 +2,7 @@ platform :ios, '10.0'
 use_frameworks!
 
 target 'PeripheralManager' do
-  pod 'BlueCapKit', :path => '../../'  
+  pod 'BlueCapKit', '~> 0.6'
 end
 
 post_install do |installer|
