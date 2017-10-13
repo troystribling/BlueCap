@@ -9,7 +9,7 @@
 # Features
 
 - A [futures](https://github.com/troystribling/SimpleFutures) interface replacing protocol implementations.
-- Timeout for `Peripheral` connection, `Service` scan, 'Service` and `Characteristic` discovery and `Characteristic` read/write.
+- Timeout for `Peripheral` connection, `Service` scan, `Service` + `Characteristic` discovery and `Characteristic` read/write.
 - A DSL for specification of GATT profiles.
 - Characteristic profile types encapsulating serialization and deserialization.
 - [Example](/Examples) applications implementing CentralManager and PeripheralManager.
