@@ -162,7 +162,7 @@ class ViewController: UITableViewController {
         }.flatMap { [unowned self] () -> Future<[Void]> in
             return [self.accelerometerEnabledCharacteristic,
                     self.accelerometerUpdatePeriodCharacteristic,
-                    self.accelerometerDataCharacteristic].flatMap { $0 }.map { $0.read(timeout: 10.0) }.sequence()
+                    self.accelerometerDataCharacteristic].compactMap { $0 }.map { $0.read(timeout: 10.0) }.sequence()
         }.flatMap { [unowned self] _ -> Future<Void> in
             guard let accelerometerDataCharacteristic = self.accelerometerDataCharacteristic else {
                 throw AppError.dataCharactertisticNotFound

@@ -30,7 +30,7 @@ public class MutableService : NSObject {
             let cbCharacteristics = characteristics.map { bcCharacteristic -> CBMutableCharacteristicInjectable in
                 bcCharacteristic.service = self
                 return bcCharacteristic.cbMutableChracteristic
-            }.flatMap { $0 }
+                }.compactMap { $0 }
             cbMutableService.setCharacteristics(cbCharacteristics)
         }
     }
