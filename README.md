@@ -20,7 +20,7 @@
 # Requirements
 
 - iOS 10.0+
-- Xcode 9.0
+- Xcode 9.3
 
 # Installation
 
@@ -41,7 +41,7 @@ platform :ios, '10.0'
 use_frameworks!
 
 target 'Your Target Name' do
-  pod 'BlueCapKit', '~> 0.6'
+  pod 'BlueCapKit', '~> 0.7'
 end
 ```
 
@@ -60,7 +60,7 @@ brew install carthage
 To add `BlueCapKit` to your `Cartfile`
 
 ```ogdl
-github "troystribling/BlueCap" ~> 0.6
+github "troystribling/BlueCap" ~> 0.7
 ```
 
 To download and build `BlueCapKit.framework` run the command,
