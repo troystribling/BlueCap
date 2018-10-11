@@ -23,7 +23,7 @@ class ProgressView : UIView {
     
     override init(frame:CGRect) {
         super.init(frame:frame)
-        self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle:UIActivityIndicatorViewStyle.whiteLarge)
+        self.activityIndicator = UIActivityIndicatorView(style:UIActivityIndicatorView.Style.whiteLarge)
         self.activityIndicator.center = self.center
         self.backgroundView = UIView(frame:frame)
         self.backgroundView.backgroundColor = UIColor.black

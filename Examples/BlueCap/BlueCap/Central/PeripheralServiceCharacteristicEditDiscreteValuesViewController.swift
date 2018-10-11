@@ -39,7 +39,7 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         guard  let characteristic = characteristic, let peripheralDiscoveryFuture = peripheralDiscoveryFuture, let peripheral = peripheral, peripheral.state == .connected else {
                 _ = self.navigationController?.popViewController(animated: true)
                 return
@@ -142,9 +142,9 @@ class PeripheralServiceCharacteristicEditDiscreteValuesViewController : UITableV
 
         if let value = characteristic.stringValue?.values.first {
             if value == stringValue {
-                cell.accessoryType = UITableViewCellAccessoryType.checkmark
+                cell.accessoryType = UITableViewCell.AccessoryType.checkmark
             } else {
-                cell.accessoryType = UITableViewCellAccessoryType.none
+                cell.accessoryType = UITableViewCell.AccessoryType.none
             }
         }
 

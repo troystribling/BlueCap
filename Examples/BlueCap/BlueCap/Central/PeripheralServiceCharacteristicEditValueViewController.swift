@@ -35,7 +35,7 @@ class PeripheralServiceCharacteristicEditValueViewController : UIViewController,
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditValueViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicEditValueViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         guard  let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
                let peripheral = peripheral,
                let characteristic = characteristic,

@@ -27,7 +27,7 @@ class PeripheralAdvertisementsOverflowServicesViewController: UITableViewControl
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralAdvertisementsOverflowServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralAdvertisementsOverflowServicesViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object:nil)
     }
     
     override func viewDidDisappear(_ animated: Bool) {

@@ -70,7 +70,7 @@ class PeripheralManagerServiceCharacteristicViewController: UITableViewControlle
         if let characteristic = self.characteristic {
             self.navigationItem.title = characteristic.name
         }
-        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralManagerServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralManagerServiceCharacteristicViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object:nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {

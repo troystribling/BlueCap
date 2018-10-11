@@ -63,7 +63,7 @@ class PeripheralViewController : UITableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object :nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object :nil)
         guard peripheral != nil else {
             _ = self.navigationController?.popToRootViewController(animated: false)
             return
@@ -77,7 +77,7 @@ class PeripheralViewController : UITableViewController {
         pauseRSSIUpdatesAndPeripheralPropertiesUpdates()
     }
 
-    override func didMove(toParentViewController parent: UIViewController?) {
+    override func didMove(toParent parent: UIViewController?) {
         if parent == nil {
             disconnect()
         }

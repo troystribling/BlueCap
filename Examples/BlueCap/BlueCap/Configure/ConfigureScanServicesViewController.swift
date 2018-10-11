@@ -57,15 +57,15 @@ class ConfigureScanServicesViewController : UITableViewController {
         return ConfigStore.getScannedServices().count
     }
     
-    override func tableView(_ tableView:UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-        return UITableViewCellEditingStyle.delete
+    override func tableView(_ tableView:UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return UITableViewCell.EditingStyle.delete
     }
     
-    override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.delete {
+    override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCell.EditingStyle, forRowAt indexPath:IndexPath) {
+        if editingStyle == UITableViewCell.EditingStyle.delete {
             let names = ConfigStore.getScannedServiceNames()
             ConfigStore.removeScannedService(names[(indexPath as NSIndexPath).row])
-            self.tableView.deleteRows(at: [indexPath], with:UITableViewRowAnimation.fade)
+            self.tableView.deleteRows(at: [indexPath], with:UITableView.RowAnimation.fade)
         }
     }
     

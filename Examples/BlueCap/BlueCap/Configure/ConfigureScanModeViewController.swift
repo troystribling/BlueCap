@@ -31,9 +31,9 @@ class ConfigureScanModeViewController: UITableViewController {
         let scanModeString = scanModes[(indexPath as NSIndexPath).row]
         cell.textLabel?.text = scanModeString
         if let scanMode = ServiceScanMode(scanModeString) , scanMode == ConfigStore.getScanMode() {
-            cell.accessoryType = UITableViewCellAccessoryType.checkmark
+            cell.accessoryType = UITableViewCell.AccessoryType.checkmark
         } else {
-            cell.accessoryType = UITableViewCellAccessoryType.none
+            cell.accessoryType = UITableViewCell.AccessoryType.none
         }
         return cell
     }

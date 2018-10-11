@@ -34,7 +34,7 @@ class BeaconsViewController: UITableViewController {
         } else {
             self.navigationItem.title = "Beacons"
         }
-        NotificationCenter.default.addObserver(self, selector:#selector(BeaconsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(BeaconsViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     override func viewWillDisappear(_ animated: Bool) {

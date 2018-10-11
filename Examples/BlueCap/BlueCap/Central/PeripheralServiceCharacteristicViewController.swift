@@ -71,7 +71,7 @@ class PeripheralServiceCharacteristicViewController : UITableViewController {
             _ = navigationController?.popToRootViewController(animated: false)
             return
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         setUI()
         peripheralDiscoveryFuture.onSuccess(cancelToken: cancelToken)  { [weak self] _ in
             self?.updateUI()

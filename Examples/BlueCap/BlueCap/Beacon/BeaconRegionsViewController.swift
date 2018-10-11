@@ -24,7 +24,7 @@ class BeaconRegionsViewController: UITableViewController {
     required init?(coder aDecoder:NSCoder) {
         super.init(coder:aDecoder)
         self.stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(BeaconRegionsViewController.toggleMonitoring(_:)))
-        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(BeaconRegionsViewController.toggleMonitoring(_:)))
+        self.startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItem.Style.plain, target: self, action: #selector(BeaconRegionsViewController.toggleMonitoring(_:)))
         self.styleUIBarButton(self.startScanBarButtonItem)
     }
     
@@ -38,7 +38,7 @@ class BeaconRegionsViewController: UITableViewController {
         self.tableView.reloadData()
         self.navigationItem.title = "Beacon Regions"
         self.setScanButton()
-        NotificationCenter.default.addObserver(self, selector: #selector(BeaconRegionsViewController.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(BeaconRegionsViewController.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -200,7 +200,7 @@ class BeaconRegionsViewController: UITableViewController {
         return !Singletons.beaconManager.isRangingRegion(identifier: name)
     }
     
-    override func tableView(_ tableView:UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
+    override func tableView(_ tableView:UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath:IndexPath) {
         if editingStyle == .delete {
             let name = BeaconStore.getBeaconNames()[(indexPath as NSIndexPath).row]
             BeaconStore.removeBeacon(name)

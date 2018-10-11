@@ -29,7 +29,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationItem.title = "Advertised Services"
-        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralManagerAdvertisedServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralManagerAdvertisedServicesViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object:nil)
         self.tableView.reloadData()
     }
     
@@ -80,7 +80,7 @@ class PeripheralManagerAdvertisedServicesViewController: UITableViewController {
         return true
     }
 
-    override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
+    override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCell.EditingStyle, forRowAt indexPath:IndexPath) {
         if editingStyle == .delete {
             let serviceUUIDs = PeripheralStore.getAdvertisedPeripheralServices()
             PeripheralStore.removeAdvertisedPeripheralService(serviceUUIDs[(indexPath as NSIndexPath).row])

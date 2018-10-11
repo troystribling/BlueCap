@@ -34,7 +34,7 @@ class PeripheralServicesViewController : UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServicesViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         guard let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
               let peripheral = peripheral,
               peripheral.state == .connected

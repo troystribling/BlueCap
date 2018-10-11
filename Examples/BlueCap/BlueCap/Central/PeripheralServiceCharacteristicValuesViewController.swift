@@ -43,7 +43,7 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
     }
     
     override func viewDidAppear(_ animated:Bool)  {
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralServiceCharacteristicValuesViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         guard  let peripheralDiscoveryFuture = peripheralDiscoveryFuture,
             let peripheral = peripheral,
             characteristic != nil,
@@ -197,9 +197,9 @@ class PeripheralServiceCharacteristicValuesViewController : UITableViewControlle
             cell.valueLable.textColor = peripheral.state == .connected ? UIColor.black : UIColor.lightGray
         }
         if characteristic.propertyEnabled(.write) || characteristic.propertyEnabled(.writeWithoutResponse) {
-            cell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
+            cell.accessoryType = UITableViewCell.AccessoryType.disclosureIndicator
         } else {
-            cell.accessoryType = UITableViewCellAccessoryType.none
+            cell.accessoryType = UITableViewCell.AccessoryType.none
         }
         return cell
     }

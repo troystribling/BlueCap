@@ -114,7 +114,7 @@ class PeripheralsViewController : UITableViewController {
         super.init(coder: aDecoder)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         stopScanBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
-        startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
+        startScanBarButtonItem = UIBarButtonItem(title: "Scan", style: UIBarButtonItem.Style.plain, target: self, action: #selector(PeripheralsViewController.toggleScan(_:)))
         styleUIBarButton(self.startScanBarButtonItem)
         Singletons.discoveryManager.whenStateChanges().onSuccess { state in
             Logger.debug("discoveryManager state changed: \(state)")
@@ -176,8 +176,8 @@ class PeripheralsViewController : UITableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: NSNotification.Name.UIApplicationDidBecomeActive, object:nil)
-        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralsViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object:nil)
         resumeScanAndConnecting()
         restartConnectionUpdatesIfNecessary()
         updatePeripheralConnectionsIfNecessary()

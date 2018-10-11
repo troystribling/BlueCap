@@ -29,7 +29,7 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -60,9 +60,9 @@ class PeripheralManagerServiceCharacteristicEditDiscreteValuesViewController : U
         cell.textLabel?.text = stringValue
         if let valueName = self.characteristic.stringValue?.keys.first, let value = self.characteristic.stringValue?[valueName] {
             if value == stringValue {
-                cell.accessoryType = UITableViewCellAccessoryType.checkmark
+                cell.accessoryType = UITableViewCell.AccessoryType.checkmark
             } else {
-                cell.accessoryType = UITableViewCellAccessoryType.none
+                cell.accessoryType = UITableViewCell.AccessoryType.none
             }
         }
         return cell

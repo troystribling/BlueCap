@@ -31,9 +31,9 @@ class ConfigurePeripheralSortOrderViewController: UITableViewController {
         let sortOrderString = sortOrders[(indexPath as NSIndexPath).row]
         cell.textLabel?.text = sortOrderString
         if let sortOrder = PeripheralSortOrder(sortOrderString) , sortOrder == ConfigStore.getPeripheralSortOrder() {
-            cell.accessoryType = UITableViewCellAccessoryType.checkmark
+            cell.accessoryType = UITableViewCell.AccessoryType.checkmark
         } else {
-            cell.accessoryType = UITableViewCellAccessoryType.none
+            cell.accessoryType = UITableViewCell.AccessoryType.none
         }
         return cell
     }

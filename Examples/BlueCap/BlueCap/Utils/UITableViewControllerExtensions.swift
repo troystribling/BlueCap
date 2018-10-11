@@ -19,26 +19,26 @@ extension UITableViewController {
     
     func styleNavigationBar() {
         let font = UIFont(name:"Thonburi", size:20.0)
-        var titleAttributes: [NSAttributedStringKey : Any]
+        var titleAttributes: [NSAttributedString.Key : Any]
         if let defaultTitleAttributes = UINavigationBar.appearance().titleTextAttributes {
             titleAttributes = defaultTitleAttributes
         } else {
-            titleAttributes = [NSAttributedStringKey : Any]()
+            titleAttributes = [NSAttributedString.Key : Any]()
         }
-        titleAttributes[NSAttributedStringKey.font] = font
+        titleAttributes[NSAttributedString.Key.font] = font
         self.navigationController?.navigationBar.titleTextAttributes = titleAttributes
     }
 
     func styleUIBarButton(_ button:UIBarButtonItem) {
         let font = UIFont(name:"Thonburi", size:16.0)
-        var titleAttributes: [NSAttributedStringKey: Any]
+        var titleAttributes: [NSAttributedString.Key: Any]
         if let defaultTitleAttributes = UINavigationBar.appearance().titleTextAttributes {
             titleAttributes = defaultTitleAttributes
         } else {
-            titleAttributes = [NSAttributedStringKey: Any]()
+            titleAttributes = [NSAttributedString.Key: Any]()
         }
-        titleAttributes[NSAttributedStringKey.font] = font
-        button.setTitleTextAttributes(titleAttributes, for:UIControlState())
+        titleAttributes[NSAttributedString.Key.font] = font
+        button.setTitleTextAttributes(titleAttributes, for:UIControl.State())
     }
 
 }

@@ -36,7 +36,7 @@ class PeripheralManagerServicesViewController : UITableViewController {
         } else {
             self.navigationItem.rightBarButtonItem!.isEnabled = true
         }
-        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralManagerServicesViewController.didEnterBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object:nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(PeripheralManagerServicesViewController.didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object:nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -88,19 +88,19 @@ class PeripheralManagerServicesViewController : UITableViewController {
         return !Singletons.peripheralManager.isAdvertising
     }
     
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-        return UITableViewCellEditingStyle.delete
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return UITableViewCell.EditingStyle.delete
     }
     
-    override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCellEditingStyle, forRowAt indexPath:IndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.delete {
+    override func tableView(_ tableView:UITableView, commit editingStyle:UITableViewCell.EditingStyle, forRowAt indexPath:IndexPath) {
+        if editingStyle == UITableViewCell.EditingStyle.delete {
             let service = Singletons.peripheralManager.services[indexPath.row]
             Singletons.peripheralManager.remove(service)
             PeripheralStore.removeSupportedPeripheralService(service.uuid)
             if PeripheralStore.getSupportedPeripheralServices().count == 0 {
                 PeripheralStore.removeAdvertisedPeripheralService(service.uuid)
             }
-            self.tableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.fade)
+            self.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.fade)
         }
     }
 

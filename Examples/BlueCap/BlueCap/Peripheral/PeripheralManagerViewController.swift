@@ -109,7 +109,7 @@ class PeripheralManagerViewController : UITableViewController, UITextFieldDelega
         }
     }
 
-    override func willMove(toParentViewController parent: UIViewController?) {
+    override func willMove(toParent parent: UIViewController?) {
         if parent == nil {
             Singletons.peripheralManager.invalidate()
         }

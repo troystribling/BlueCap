@@ -23,7 +23,7 @@ class Notify {
             let content = UNMutableNotificationContent()
             content.title = ""
             content.body = message
-            content.sound = UNNotificationSound.default()
+            content.sound = UNNotificationSound.default
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.0, repeats: false)
             let request = UNNotificationRequest(identifier: "Immediate", content: content, trigger: trigger)
             let center = UNUserNotificationCenter.current()
