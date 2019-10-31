@@ -354,11 +354,10 @@ public struct Queue {
 public struct CompletionId : Hashable {
 
     let identifier = UUID()
-
-    public var hashValue: Int {
-        return identifier.hashValue
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
     }
-
 }
 
 public func ==(lhs: CompletionId, rhs: CompletionId) -> Bool {
@@ -398,7 +397,7 @@ public extension Futurable {
 
     //MARK: - Combinators -
 
-    public func map<M>(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> M) -> Future<M> {
+    func map<M>(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> M) -> Future<M> {
         let future = Future<M>()
         onComplete(context: context, cancelToken: cancelToken) { result in
             future.complete(result.map(mapping))
@@ -406,7 +405,7 @@ public extension Futurable {
         return future
     }
 
-    public func flatMap<M>(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> Future<M>) -> Future<M> {
+    func flatMap<M>(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (T) throws -> Future<M>) -> Future<M> {
         let future = Future<M>()
         onComplete(context: context, cancelToken: cancelToken) { result in
             future.completeWith(context: context, future: result.map(mapping))
@@ -414,7 +413,7 @@ public extension Futurable {
         return future
     }
 
-    public func withFilter(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), filter: @escaping (T) throws -> Bool) -> Future<T> {
+    func withFilter(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), filter: @escaping (T) throws -> Bool) -> Future<T> {
         let future = Future<T>()
         onComplete(context: context, cancelToken: cancelToken) { result in
             future.complete(result.filter(filter))
@@ -422,13 +421,13 @@ public extension Futurable {
         return future
     }
 
-    public func forEach(context:ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), apply: @escaping (T) -> Void) {
+    func forEach(context:ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), apply: @escaping (T) -> Void) {
         onComplete(context: context, cancelToken: cancelToken) { result in
             result.forEach(apply)
         }
     }
 
-    public func andThen(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (T) -> Void) -> Future<T> {
+    func andThen(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), completion: @escaping (T) -> Void) -> Future<T> {
         let future = Future<T>()
         future.onSuccess(context: context, cancelToken: cancelToken, completion: completion)
         onComplete(context: context, cancelToken: cancelToken) { result in
@@ -437,7 +436,7 @@ public extension Futurable {
         return future
     }
 
-    public func recover(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> T) -> Future<T> {
+    func recover(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> T) -> Future<T> {
         let future = Future<T>()
         onComplete(context: context, cancelToken: cancelToken) { result in
             future.complete(result.recover(recovery))
@@ -445,7 +444,7 @@ public extension Futurable {
         return future
     }
 
-    public func recoverWith(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> Future<T>) -> Future<T> {
+    func recoverWith(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), recovery: @escaping (Swift.Error) throws -> Future<T>) -> Future<T> {
         let future = Future<T>()
         self.onComplete(context: context, cancelToken: cancelToken) { result in
             switch result {
@@ -462,7 +461,7 @@ public extension Futurable {
         return future
     }
 
-    public func mapError(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (Swift.Error) -> Swift.Error) -> Future<T> {
+    func mapError(context: ExecutionContext = QueueContext.futuresDefault, cancelToken: CancelToken = CancelToken(), mapping: @escaping (Swift.Error) -> Swift.Error) -> Future<T> {
         let future = Future<T>()
         onComplete(context: context, cancelToken: cancelToken) { result in
             future.complete(result.mapError(mapping))
