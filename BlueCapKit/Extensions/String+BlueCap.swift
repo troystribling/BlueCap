@@ -10,11 +10,11 @@ import Foundation
 
 public extension String {
     
-    public var floatValue : Float {
+    var floatValue : Float {
         return (self as NSString).floatValue
     }
     
-    public func dataFromHexString() -> Data {
+    func dataFromHexString() -> Data {
         var bytes = [UInt8]()
         for i in 0..<(count/2) {
             let range = index(self.startIndex, offsetBy: 2*i)..<index(self.startIndex, offsetBy: 2*i+2)

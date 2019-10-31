@@ -21,6 +21,9 @@ public extension CLProximity {
             return "Near"
         case .far:
             return "Far"
+        @unknown default:
+            assertionFailure("unsupported case")
+            return "Unknown"
         }
     }
 }
