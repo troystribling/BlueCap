@@ -97,6 +97,8 @@ class BeaconsViewController: UITableViewController {
                 cell.proximityLabel.textColor = UIColor(red:0.4, green:0.75, blue:1.0, alpha:0.6)
             case .far:
                 cell.proximityLabel.textColor = UIColor(red:1.0, green:0.6, blue:0.0, alpha:0.6)
+            @unknown default:
+                fatalError()
             }
         }
         return cell
