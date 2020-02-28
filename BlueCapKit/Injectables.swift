@@ -59,6 +59,8 @@ extension CBCentralManager : CBCentralManagerInjectable {
             return .poweredOff
         case .poweredOn:
             return .poweredOn
+        @unknown default:
+            fatalError()
         }
     }
 
@@ -176,6 +178,8 @@ extension CBPeripheralManager: CBPeripheralManagerInjectable {
             return .poweredOff
         case .poweredOn:
             return .poweredOn
+        @unknown default:
+            fatalError()
         }
     }
 

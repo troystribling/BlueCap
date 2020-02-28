@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
 
   spec.name              = "BlueCapKit"
-  spec.version           = "0.7.0"
+  spec.version           = "0.8.0"
   spec.summary           = "BlueCap is Swift  CoreBluetooth and much more."
 
   spec.homepage          = "https://github.com/troystribling/BlueCap"
@@ -11,7 +11,7 @@ Pod::Spec.new do |spec|
   spec.author             = { "Troy Stribling" => "me@troystribling.com" }
   spec.social_media_url   = "http://twitter.com/troystribling"
 
-  spec.platform           = :ios, "10.0"
+  spec.platform           = :ios, "12.0"
 
   spec.cocoapods_version  = '>= 1.1'
 
