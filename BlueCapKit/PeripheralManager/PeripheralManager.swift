@@ -173,6 +173,27 @@ public class PeripheralManager: NSObject, CBPeripheralManagerDelegate {
         }
     }
     
+    public func startAdvertising(region: BeaconRegion, name: String, uuids: [CBUUID]? = nil) -> Future<Void> {
+        return self.peripheralQueue.sync {
+            self._name = name
+            self.afterAdvertisingStartedPromise = Promise<Void>()
+            if !self.isAdvertising {
+                let beaconAdvertisementData = region.peripheralDataWithMeasuredPower(nil)
+                var advertisementData : [String:AnyObject] = [CBAdvertisementDataLocalNameKey:name as AnyObject]
+                if let uuids = uuids {
+                    advertisementData[CBAdvertisementDataServiceUUIDsKey] = uuids as AnyObject?
+                }
+                for (key, value) in beaconAdvertisementData {
+                    advertisementData[key] = value
+                }
+                self.cbPeripheralManager.startAdvertising(advertisementData)
+            } else {
+                self.afterAdvertisingStartedPromise?.failure(PeripheralManagerError.isAdvertising)
+            }
+            return self.afterAdvertisingStartedPromise!.future
+        }
+    }
+    
     public func stopAdvertising(timeout: TimeInterval = 10.0) -> Future<Void> {
         return self.peripheralQueue.sync {
             guard self.isAdvertising else {
