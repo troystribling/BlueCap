@@ -12,8 +12,12 @@ let package = Package(
     targets: [
         .target(
             name: "BlueCap",
-            path: "BlueCapKit"          
-            ),
+            path: "BlueCapKit"
+        ),
+        .testTarget(name: "BlueCapTests",
+                    dependencies: ["BlueCap"],
+                    path: "Tests/BlueCapKitTests"
+        ),
     ],
     swiftLanguageVersions: [.v4_2]
 )

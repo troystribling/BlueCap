@@ -9,7 +9,6 @@
 import UIKit
 import CoreBluetooth
 import CoreLocation
-@testable import BlueCapKit
 
 // MARK: - Advertisements -
 

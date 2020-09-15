@@ -46,6 +46,7 @@
 		05D3B9461A2BA162008E794E /* String+BlueCap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D3B9441A2BA162008E794E /* String+BlueCap.swift */; };
 		05FC0A0F1CC7CF5E0071BC8F /* Injectables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */; };
 		4ED105C01C315C420034D5D2 /* UInt32+Deserializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED105BF1C315C420034D5D2 /* UInt32+Deserializable.swift */; };
+		9BE85C662510B93E00F7C93E /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE85C652510B93E00F7C93E /* Mocks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,6 +91,7 @@
 		05D3B9441A2BA162008E794E /* String+BlueCap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+BlueCap.swift"; sourceTree = "<group>"; };
 		05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Injectables.swift; sourceTree = "<group>"; };
 		4ED105BF1C315C420034D5D2 /* UInt32+Deserializable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UInt32+Deserializable.swift"; sourceTree = "<group>"; };
+		9BE85C652510B93E00F7C93E /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 		0551208419F5506000ED3B74 /* BlueCapKit */ = {
 			isa = PBXGroup;
 			children = (
+				9BE85C642510B84600F7C93E /* Mocks */,
 				056276081CCD3F0A00F955D7 /* Errors.swift */,
 				05FC0A0E1CC7CF5E0071BC8F /* Injectables.swift */,
 				0551209C19F5513700ED3B74 /* Central */,
@@ -256,6 +259,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		9BE85C642510B84600F7C93E /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				9BE85C652510B93E00F7C93E /* Mocks.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -362,6 +373,7 @@
 				05585BE41D0CA4AB000F5307 /* Logger.swift in Sources */,
 				055120ED19F5513700ED3B74 /* BLESIGGATTProfiles.swift in Sources */,
 				05585BE11D0CA475000F5307 /* ServiceProfile.swift in Sources */,
+				9BE85C662510B93E00F7C93E /* Mocks.swift in Sources */,
 				05D3B9451A2BA162008E794E /* Double+BlueCap.swift in Sources */,
 				05C405AC1D7B7C6F00803654 /* RegionManager.swift in Sources */,
 				055120E319F5513700ED3B74 /* UInt16+Deserializable.swift in Sources */,
