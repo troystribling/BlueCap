@@ -114,7 +114,7 @@ public class CBPeripheralMock: CBPeripheralInjectable {
     var error: Error?
     var RSSI: Int = -44
 
-    init(state: CBPeripheralState = .disconnected, identifier: UUID = UUID()) {
+    public init(state: CBPeripheralState = .disconnected, identifier: UUID = UUID()) {
         self.state = state
         self.identifier = identifier
     }
