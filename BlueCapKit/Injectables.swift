@@ -32,7 +32,7 @@ public enum ManagerState: CustomStringConvertible {
 }
 
 // MARK: - CBCentralManagerInjectable -
-protocol CBCentralManagerInjectable: class {
+public protocol CBCentralManagerInjectable: class {
     var managerState : ManagerState { get }
     var delegate: CBCentralManagerDelegate? { get set }
     func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?)
@@ -45,7 +45,7 @@ protocol CBCentralManagerInjectable: class {
 
 extension CBCentralManager : CBCentralManagerInjectable {
 
-    var managerState: ManagerState {
+    public var managerState: ManagerState {
         switch state {
         case .unauthorized:
             return .unauthorized
@@ -64,20 +64,20 @@ extension CBCentralManager : CBCentralManagerInjectable {
         }
     }
 
-    func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?) {
+    public func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?) {
         self.connect(peripheral as! CBPeripheral, options: options)
     }
 
-    func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable) {
+    public func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable) {
         self.cancelPeripheralConnection(peripheral as! CBPeripheral)
     }
 
-    func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
+    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
         let peripherals = self.retrieveConnectedPeripherals(withServices: serviceUUIDs) as [CBPeripheral]
         return  peripherals.map { $0 as CBPeripheralInjectable }
     }
 
-    func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
+    public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
         let peripherals = self.retrievePeripherals(withIdentifiers: identifiers) as [CBPeripheral]
         return  peripherals.map { $0 as CBPeripheralInjectable }
     }

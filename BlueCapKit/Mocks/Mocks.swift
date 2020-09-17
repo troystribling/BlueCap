@@ -31,39 +31,39 @@ public class CBCentralManagerMock: CBCentralManagerInjectable {
 
     var state: ManagerState
     var stopScanCalled = false
-    var delegate: CBCentralManagerDelegate?
+    public var delegate: CBCentralManagerDelegate?
 
     init(state: ManagerState = .poweredOn) {
         self.state = state
     }
 
-    var managerState: ManagerState {
+    public var managerState: ManagerState {
         return state
     }
 
-    func scanForPeripherals(withServices uuids: [CBUUID]?, options:[String : Any]?) {
+    public func scanForPeripherals(withServices uuids: [CBUUID]?, options:[String : Any]?) {
         scanForPeripheralsWithServicesCalled = true
     }
     
-    func stopScan() {
+    public func stopScan() {
         stopScanCalled = true
     }
     
-    func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?) {
+    public func connect(_ peripheral: CBPeripheralInjectable, options: [String : Any]?) {
         connectPeripheralCalled = true
         connectPeripheralCount += 1
     }
 
-    func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable) {
+    public func cancelPeripheralConnection(_ peripheral: CBPeripheralInjectable) {
         cancelPeripheralConnectionCalled = true
         cancelPeripheralConnectionCount += 1
     }
 
-    func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
+    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralInjectable] {
         return retrievedPeripherals
     }
 
-    func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
+    public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralInjectable] {
         return retrievedPeripherals
     }
 
@@ -73,7 +73,7 @@ public class CBCentralManagerMock: CBCentralManagerInjectable {
 
 public class CentralManagerUT: CentralManager {
 
-    override init(centralManager: CBCentralManagerInjectable, profileManager: ProfileManager? = nil) {
+    public override init(centralManager: CBCentralManagerInjectable, profileManager: ProfileManager? = nil) {
         super.init(centralManager: centralManager, profileManager: profileManager)
     }
 
@@ -211,7 +211,7 @@ public class CBCharacteristicMock: CBCharacteristicInjectable {
     public var properties: CBCharacteristicProperties
     public var isNotifying = false
 
-    init (uuid: CBUUID = CBUUID(string: Foundation.UUID().uuidString), properties: CBCharacteristicProperties = [.read, .write], isNotifying: Bool = false) {
+    public init (uuid: CBUUID = CBUUID(string: Foundation.UUID().uuidString), properties: CBCharacteristicProperties = [.read, .write], isNotifying: Bool = false) {
         self.uuid = uuid
         self.properties = properties
         self.isNotifying = isNotifying
