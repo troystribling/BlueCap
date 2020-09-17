@@ -33,7 +33,7 @@ public class CBCentralManagerMock: CBCentralManagerInjectable {
     var stopScanCalled = false
     public var delegate: CBCentralManagerDelegate?
 
-    init(state: ManagerState = .poweredOn) {
+    public init(state: ManagerState = .poweredOn) {
         self.state = state
     }
 
