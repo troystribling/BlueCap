@@ -173,7 +173,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     // MARK: Initializers
 
-    internal init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String : Any], RSSI: Int, profileManager: ProfileManager? = nil) {
+    public init(cbPeripheral: CBPeripheralInjectable, centralManager: CentralManager, advertisements: [String : Any], RSSI: Int, profileManager: ProfileManager? = nil) {
         self.cbPeripheral = cbPeripheral
         self.centralManager = centralManager
         self.advertisements = PeripheralAdvertisements(advertisements: advertisements)

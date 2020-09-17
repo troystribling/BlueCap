@@ -83,7 +83,7 @@ public class CentralManagerUT: CentralManager {
 
 public class CBPeripheralMock: CBPeripheralInjectable {
    
-    var state: CBPeripheralState
+    public var state: CBPeripheralState
     var _delegate: CBPeripheralDelegate? = nil
     
     var setDelegateCalled = false
@@ -106,7 +106,7 @@ public class CBPeripheralMock: CBPeripheralInjectable {
     var readValueForCharacteristicCount = 0
     var writeValueCount = 0
     
-    let identifier: UUID
+    public let identifier: UUID
 
     var services: [CBServiceMock]?
 
@@ -119,7 +119,7 @@ public class CBPeripheralMock: CBPeripheralInjectable {
         self.identifier = identifier
     }
     
-    var delegate: CBPeripheralDelegate? {
+    public var delegate: CBPeripheralDelegate? {
         get {
             return self._delegate
         }
@@ -129,45 +129,45 @@ public class CBPeripheralMock: CBPeripheralInjectable {
         }
     }
     
-    var name: String? {
+    public var name: String? {
         return "Test Peripheral"
     }
 
-    func readRSSI() {
+    public func readRSSI() {
         self.readRSSICalled = true
         self.readRSSICalledCount += 1
         self.bcPeripheral?.didReadRSSI(NSNumber(value: self.RSSI), error: self.error)
     }
 
-    func discoverServices(_ services: [CBUUID]?) {
+    public func discoverServices(_ services: [CBUUID]?) {
         self.discoverServicesCalled = true
         self.discoverServicesCalledCount += 1
     }
     
-    func discoverCharacteristics(_ characteristics: [CBUUID]?, forService service: CBServiceInjectable) {
+    public func discoverCharacteristics(_ characteristics: [CBUUID]?, forService service: CBServiceInjectable) {
         self.discoverCharacteristicsCalled = true
         self.discoverCharacteristicsCalledCount += 1
     }
     
-    func setNotifyValue(_ state: Bool, forCharacteristic characteristic: CBCharacteristicInjectable) {
+    public func setNotifyValue(_ state: Bool, forCharacteristic characteristic: CBCharacteristicInjectable) {
         self.setNotifyValueCalled = true
         self.setNotifyValueCount += 1
         self.notifyingState = state
     }
     
-    func readValueForCharacteristic(_ characteristic: CBCharacteristicInjectable) {
+    public func readValueForCharacteristic(_ characteristic: CBCharacteristicInjectable) {
         self.readValueForCharacteristicCount += 1
         self.readValueForCharacteristicCalled = true
     }
     
-    func writeValue(_ data:Data, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType) {
+    public func writeValue(_ data:Data, forCharacteristic characteristic: CBCharacteristicInjectable, type: CBCharacteristicWriteType) {
         self.writeValueCount += 1
         self.writeValueCalled = true
         self.writtenData = data
         self.writtenType = type
     }
 
-    func getServices() -> [CBServiceInjectable]? {
+    public func getServices() -> [CBServiceInjectable]? {
         guard let services = self.services else { return nil }
         return services.map{ $0 as CBServiceInjectable }
     }
@@ -188,14 +188,14 @@ public class PeripheralUT: Peripheral {
 
 public class CBServiceMock: CBServiceInjectable {
 
-    var uuid: CBUUID
+    public var uuid: CBUUID
     var characteristics: [CBCharacteristicMock]?
 
     init(uuid: CBUUID = CBUUID(nsuuid: UUID())) {
         self.uuid = uuid
     }
 
-    func getCharacteristics() -> [CBCharacteristicInjectable]? {
+    public func getCharacteristics() -> [CBCharacteristicInjectable]? {
         guard let characteristics = self.characteristics else { return nil }
         return characteristics.map{ $0 as CBCharacteristicInjectable }
     }
