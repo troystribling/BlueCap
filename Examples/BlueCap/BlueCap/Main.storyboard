@@ -1693,15 +1693,15 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="J4N-zT-mhT">
-                                                    <rect key="frame" x="23" y="15" width="325" height="31"/>
+                                                    <rect key="frame" x="16" y="15" width="343" height="31"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enabled" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tn0-WR-O58">
-                                                            <rect key="frame" x="0.0" y="0.0" width="276" height="31"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="294" height="31"/>
                                                             <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="19"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="fJ3-ln-Gml">
-                                                            <rect key="frame" x="276" y="0.0" width="51" height="31"/>
+                                                            <rect key="frame" x="294" y="0.0" width="51" height="31"/>
                                                             <connections>
                                                                 <action selector="toggelPeripheralConnectionTimeout:" destination="z0r-2o-HqO" eventType="valueChanged" id="azB-Kd-LiE"/>
                                                             </connections>
@@ -1710,9 +1710,9 @@
                                                 </stackView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="J4N-zT-mhT" secondAttribute="trailing" constant="11" id="HqI-hU-dzo"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="J4N-zT-mhT" secondAttribute="trailing" id="HqI-hU-dzo"/>
                                                 <constraint firstItem="J4N-zT-mhT" firstAttribute="top" secondItem="6F6-6x-3YS" secondAttribute="topMargin" constant="4" id="mX8-2F-Eid"/>
-                                                <constraint firstItem="J4N-zT-mhT" firstAttribute="leading" secondItem="6F6-6x-3YS" secondAttribute="leadingMargin" constant="7" id="v3F-YE-Liw"/>
+                                                <constraint firstItem="J4N-zT-mhT" firstAttribute="leading" secondItem="6F6-6x-3YS" secondAttribute="leadingMargin" id="v3F-YE-Liw"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
