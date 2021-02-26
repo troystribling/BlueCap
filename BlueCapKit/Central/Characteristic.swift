@@ -205,6 +205,11 @@ public class Characteristic : NSObject {
 
     public func receiveNotificationUpdates(capacity: Int = Int.max) -> FutureStream<Data?> {
         return centralQueue.sync {
+            if self.dataValue != nil {
+                self.centralQueue.delay(1) { [weak self] in
+                    self?.didUpdate(nil)
+                }
+            }
             if let notificationUpdatePromise = self.notificationUpdatePromise {
                 return notificationUpdatePromise.stream
             }
