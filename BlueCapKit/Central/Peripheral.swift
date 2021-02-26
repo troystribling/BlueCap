@@ -92,7 +92,7 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
 
     var discoveredServices = [CBUUID : [Service]]()
 
-    let cbPeripheral: CBPeripheralInjectable
+    public let cbPeripheral: CBPeripheralInjectable
     
     public private(set) var advertisements: PeripheralAdvertisements
     public let discoveredAt = Date()
