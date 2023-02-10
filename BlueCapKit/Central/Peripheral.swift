@@ -209,6 +209,12 @@ public class Peripheral: NSObject, CBPeripheralDelegate {
         }
     }
 
+    // MARK: Advertisements
+
+    public func updateAdvertisements(_ advertisementData: [String: Any]) {
+        self.advertisements = PeripheralAdvertisements(advertisements: advertisementData)
+    }
+
     // MARK: RSSI
 
     public func readRSSI() -> Future<Int> {
